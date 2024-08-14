@@ -4,14 +4,13 @@ using Microsoft.EntityFrameworkCore;
 namespace Announcements.Infrastructure.DatabaseContext
 {
     public class ApplicationDbContext : DbContext
-    { 
+    {
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
         {
         }
 
         public ApplicationDbContext()
         {
-            
         }
 
         public DbSet<Announcement> Announcements { get; set; }

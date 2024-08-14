@@ -5,8 +5,9 @@ namespace Announcements.Core.Entities
     public class Announcement
     {
         [Key]
+        public int Id { get; set; }
         public string Title { get; set; }
-        public string Desciption { get; set; }
+        public string Description { get; set; }
         public DateTime DateAdded { get; set; }
     }
 }
