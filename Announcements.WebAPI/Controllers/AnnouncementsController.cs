@@ -1,5 +1,6 @@
 ﻿using Announcements.Core.Entities;
 using Announcements.Infrastructure.DatabaseContext;
+using Announcements.Infrastructure.Helpers;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -42,7 +43,7 @@ namespace Announcements.WebAPI.Controllers
         /// <param name="announcementId">Announcement id to retrieve</param>
         /// <returns></returns>
         [HttpGet("{announcementId}")]
-        public async Task<ActionResult<Announcement>> GetAnnouncement(int announcementId)
+        public async Task<ActionResult<object>> GetAnnouncement(int announcementId)
         {
             if (_context.Announcements == null)
             {
@@ -55,7 +56,25 @@ namespace Announcements.WebAPI.Controllers
                 return NotFound();
             }
 
-            return announcement;
+            var similarAnnouncements = SimilarAnnouncements
+                .GetSimilarAnnouncements(await _context.Announcements.ToListAsync(), announcement);
+
+            var announcementWithSimilar = new
+            {
+                Id = announcement.Id,
+                Title = announcement.Title,
+                Description = announcement.Description,
+                DateAdded = announcement.DateAdded,
+                SimilarAnnouncements = similarAnnouncements.Select(sa => new
+                {
+                    Id = sa.Id,
+                    Title = sa.Title,
+                    Description = sa.Description,
+                    DateAdded = sa.DateAdded
+                }).ToList()
+            };
+
+            return announcementWithSimilar;
         }
 
         // PUT: api/Announcements/5
