@@ -1,4 +1,4 @@
-<h2>Cities</h2>
+<h2>Announcements</h2>
 
 <div class="table-container">
   <table class="table w-100">
@@ -15,9 +15,9 @@
     <tbody>
       <tr *ngFor="let announcement of announcements; let i = index">
         <td>{{i+1}}</td>
-        <td>{{announcement.title}}</td>
+        <td><button class="button button-blue-back" [routerLink]="['/announcement', announcement.id]">{{announcement.title}}</button></td>
         <td>{{announcement.description}}</td>
-        <td>{{announcement.dateAdded}}</td>
+        <td>{{announcement.dateAdded | date: 'MMM dd yyyy HH:mm:ss'}}</td>
       </tr>
     </tbody>
   </table>

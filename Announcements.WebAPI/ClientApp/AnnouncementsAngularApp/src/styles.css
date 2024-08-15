@@ -193,6 +193,7 @@ body {
 
 .p {
   padding: 10px;
+  font-size: 20px;
 }
 
 .pt {
@@ -210,6 +211,15 @@ body {
 
 .pr {
   padding-right: 10px;
+}
+
+.description {
+    font-size: 20px;
+    color: #000000;
+}
+
+.date {
+    font-size: 14px;
 }
 
 

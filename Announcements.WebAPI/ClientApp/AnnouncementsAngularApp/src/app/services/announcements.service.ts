@@ -7,15 +7,15 @@ import { Observable } from 'rxjs';
   providedIn: 'root'
 })
 export class AnnouncementsService {
-  announcements: Announcement[] = [];
+  private apiUrl = 'https://localhost:7193/api/announcements';
 
-  constructor(private httpClient: HttpClient) {
-    this.announcements = [
+  constructor(private httpClient: HttpClient) { }
 
-    ];
+  public getAnnouncements(): Observable<Announcement[]> {
+    return this.httpClient.get<Announcement[]>(`${this.apiUrl}`);
   }
 
-  public getCities(): Observable<Announcement[]> {
-    return this.httpClient.get<Announcement[]>("https://localhost:7193/api/announcements");
+  public getAnnouncementById(id: number): Observable<any> {
+    return this.httpClient.get(`${this.apiUrl}/${id}`);
   }
 }

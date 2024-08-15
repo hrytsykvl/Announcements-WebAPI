@@ -1,0 +1,14 @@
+<h2>{{announcement?.title}}</h2>
+<p class="description">{{announcement?.description}}</p>
+<p class="date">{{announcement?.dateAdded | date: 'MMM dd yyyy HH:mm:ss'}}</p>
+
+<h3>Similar Announcements</h3>
+<ul class="list-container">
+  <li *ngFor="let similar of announcement?.similarAnnouncements">
+    <button class="button button-blue-back" [routerLink]="['/announcement', similar.id]">
+      <strong>{{similar.title}}</strong>
+    </button>
+      <p class="description">{{similar.description}}</p>
+  </li>
+</ul>
+

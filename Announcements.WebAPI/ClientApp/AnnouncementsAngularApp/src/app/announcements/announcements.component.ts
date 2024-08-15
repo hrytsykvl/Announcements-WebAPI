@@ -14,7 +14,7 @@ export class AnnouncementsComponent {
   }
 
   ngOnInit() {
-    this.announcementsService.getCities()
+    this.announcementsService.getAnnouncements()
       .subscribe({
         next: (response: Announcement[]) => {
           this.announcements = response;
