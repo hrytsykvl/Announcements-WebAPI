@@ -25,4 +25,8 @@
     <ProjectReference Include="..\Announcements.Infrastructure\Announcements.Infrastructure.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="ClientApp\" />
+  </ItemGroup>
+
 </Project>

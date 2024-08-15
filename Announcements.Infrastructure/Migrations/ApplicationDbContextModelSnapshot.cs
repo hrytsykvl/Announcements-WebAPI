@@ -43,7 +43,7 @@ namespace Announcements.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Announcements");
+                    b.ToTable("Announcements", (string)null);
                 });
 #pragma warning restore 612, 618
         }

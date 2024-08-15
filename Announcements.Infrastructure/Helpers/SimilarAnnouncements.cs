@@ -10,7 +10,7 @@ namespace Announcements.Infrastructure.Helpers
                    .Where(announcement => announcement.Id != currentAnnouncement.Id &&
                        (announcement.Title.Split(' ').Intersect(currentAnnouncement.Title.Split(' ')).Any() &&
                         announcement.Description.Split(' ').Intersect(currentAnnouncement.Description.Split(' ')).Any()))
-                   .Take(3)
+                   .TakeLast(3)
                    .ToList();
         }
     }
