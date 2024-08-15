@@ -1,24 +1,79 @@
 <h2>Announcements</h2>
 
-<div class="table-container">
-  <table class="table w-100">
+<div class="flex">
+  <div class="flex-1 w-75">
+    <div class="table-container">
+      <table class="table w-100">
 
-    <thead>
-      <tr>
-        <th>#</th>
-        <th>Title</th>
-        <th>Description</th>
-        <th>Date Added</th>
-      </tr>
-    </thead>
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Title</th>
+            <th>Description</th>
+            <th>Date Added</th>
+          </tr>
+        </thead>
 
-    <tbody>
-      <tr *ngFor="let announcement of announcements; let i = index">
-        <td>{{i+1}}</td>
-        <td><button class="button button-blue-back" [routerLink]="['/announcement', announcement.id]">{{announcement.title}}</button></td>
-        <td>{{announcement.description}}</td>
-        <td>{{announcement.dateAdded | date: 'MMM dd yyyy HH:mm:ss'}}</td>
-      </tr>
-    </tbody>
-  </table>
+        <tbody>
+          <tr *ngFor="let announcement of announcements; let i = index">
+            <td>{{i+1}}</td>
+            <td><button class="button button-blue-back" [routerLink]="['/announcement', announcement.id]">{{announcement.title}}</button></td>
+            <td>{{announcement.description}}</td>
+            <td>{{announcement.dateAdded | date: 'MMM dd yyyy HH:mm:ss'}}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+
+  <div class="flex-1 w-25">
+
+    <div class="form-container">
+      <h3>Create Announcement</h3>
+
+      <form [formGroup]="postAnnouncementForm" (ngSubmit)="postAnnouncementSubmitted()">
+
+        <!-- Title -->
+        <div class="form-field flex">
+          <div class="w-25">
+            <label for="Title" class="form-label pt">Title</label>
+          </div>
+
+          <div class="flex-1">
+            <input type="text" class="form-input" formControlName="title" />
+            <span class="text-red" *ngIf="(postAnnouncement_TitleControl.touched ||
+                  isPostAnnouncementFormSubmitted) &&
+                  (postAnnouncement_TitleControl.errors?.
+                  ['required'])">Title can't be blank</span>
+          </div>
+        </div>
+
+        <!-- Description -->
+        <div class="form-field flex">
+          <div class="w-25">
+            <label for="Description" class="form-label pt">Description</label>
+          </div>
+
+          <div class="flex-1">
+            <input type="text" class="form-input" formControlName="description" />
+            <span class="text-red" *ngIf="(postAnnouncement_DescriptionControl.touched ||
+                  isPostAnnouncementFormSubmitted) &&
+                  (postAnnouncement_DescriptionControl.errors?.
+                  ['required'])">Description can't be blank</span>
+          </div>
+        </div>
+
+        <div class="form-field flex">
+          <div class="w-25"></div>
+
+          <div class="flex-1">
+            <button class="button button-green-back">Create</button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
 </div>
+
+

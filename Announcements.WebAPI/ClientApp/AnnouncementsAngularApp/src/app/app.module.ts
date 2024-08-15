@@ -6,6 +6,7 @@ import { AppComponent } from './app.component';
 import { AnnouncementsComponent } from './announcements/announcements.component';
 import { HttpClientModule } from '@angular/common/http';
 import { AnnouncementDetailsComponent } from './announcement-details/announcement-details.component';
+import { ReactiveFormsModule } from '@angular/forms';
 
 @NgModule({
   declarations: [
@@ -16,7 +17,8 @@ import { AnnouncementDetailsComponent } from './announcement-details/announcemen
   imports: [
     BrowserModule,
     AppRoutingModule,
-    HttpClientModule
+    HttpClientModule,
+    ReactiveFormsModule
   ],
   providers: [],
   bootstrap: [AppComponent]
