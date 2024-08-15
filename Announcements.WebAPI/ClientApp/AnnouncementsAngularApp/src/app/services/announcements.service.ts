@@ -22,4 +22,8 @@ export class AnnouncementsService {
   public postAnnouncement(announcement: Announcement): Observable<Announcement> {
     return this.httpClient.post<Announcement>(`${API_BASE_URL}announcements`, announcement);
   }
+
+  public putAnnouncement(announcement: Announcement): Observable<string> {
+    return this.httpClient.put<string>(`${API_BASE_URL}announcements/${announcement.id}`, announcement);
+  }
 }

@@ -3,7 +3,7 @@
 <div class="flex">
   <div class="flex-1 w-75">
     <div class="table-container">
-      <table class="table w-100">
+      <table class="table w-100" [formGroup]="putAnnouncementForm">
 
         <thead>
           <tr>
@@ -11,15 +11,30 @@
             <th>Title</th>
             <th>Description</th>
             <th>Date Added</th>
+            <th></th>
           </tr>
         </thead>
 
-        <tbody>
+        <tbody formArrayName="announcements">
           <tr *ngFor="let announcement of announcements; let i = index">
             <td>{{i+1}}</td>
-            <td><button class="button button-blue-back" [routerLink]="['/announcement', announcement.id]">{{announcement.title}}</button></td>
-            <td>{{announcement.description}}</td>
+            <td [formGroupName]="i">
+              <input class="an-title" type="text" formControlName="title" [ngClass]="{ 'border-less-textbox': announcement.id != editAnnouncementID,
+                     'form-input': announcement.id == editAnnouncementID }" [disableControl]="announcement.id != editAnnouncementID" />
+              <button class="button button-blue-back" (click)="navigateToAnnouncement(announcement.id)">Go to</button>
+            </td>
+            <td [formGroupName]="i">
+              <textarea class="description" rows="3" formControlName="description" [ngClass]="{ 'border-less-textbox': announcement.id != editAnnouncementID,
+         'form-input': announcement.id == editAnnouncementID }" [disableControl]="announcement.id != editAnnouncementID" ></textarea>
+            </td>
             <td>{{announcement.dateAdded | date: 'MMM dd yyyy HH:mm:ss'}}</td>
+            <td style="width: 100px">
+              <button class="button button-orange-back" (click)="editClicked(announcement); $event.stopPropagation()"
+                      *ngIf="announcement.id != editAnnouncementID">Edit</button>
+
+              <button class="button button-orange-back link-hover" (click)="updateClicked(i); $event.stopPropagation()"
+                      *ngIf="announcement.id == editAnnouncementID">Update</button>
+            </td>
           </tr>
         </tbody>
       </table>

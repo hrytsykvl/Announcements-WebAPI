@@ -1,7 +1,8 @@
 import { Component } from '@angular/core';
 import { Announcement } from '../models/announcement';
 import { AnnouncementsService } from '../services/announcements.service';
-import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { FormArray, FormControl, FormGroup, Validators } from '@angular/forms';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-announcements',
@@ -13,12 +14,23 @@ export class AnnouncementsComponent {
   postAnnouncementForm: FormGroup;
   isPostAnnouncementFormSubmitted: boolean = false;
 
-  constructor(private announcementsService: AnnouncementsService) {
+  putAnnouncementForm: FormGroup;
+  editAnnouncementID: number | null = null;
+
+  constructor(private announcementsService: AnnouncementsService, private router: Router) {
     this.postAnnouncementForm = new FormGroup({
       title: new FormControl(null, [Validators.required]),
       description: new FormControl(null, [Validators.required]),
       dateAdded: new FormControl(new Date())
     });
+
+    this.putAnnouncementForm = new FormGroup({
+      announcements: new FormArray([])
+    });
+  }
+
+  get putAnnouncementFormArray(): FormArray {
+    return this.putAnnouncementForm.get('announcements') as FormArray;
   }
 
   loadAnnouncements() {
@@ -26,6 +38,15 @@ export class AnnouncementsComponent {
       .subscribe({
         next: (response: Announcement[]) => {
           this.announcements = response;
+
+          this.announcements.forEach(announcement => {
+            this.putAnnouncementFormArray.push(new FormGroup({
+              id: new FormControl(announcement.id, [Validators.required]),
+              title: new FormControl({ value: announcement.title, disabled: true }, [Validators.required]),
+              description: new FormControl({ value: announcement.description, disabled: true }, [Validators.required]),
+              dateAdded: new FormControl(announcement.dateAdded, [Validators.required]),
+            }));
+          });
         },
         error: (error: any) => {
           console.log(error);
@@ -56,6 +77,16 @@ export class AnnouncementsComponent {
         this.loadAnnouncements();
 
         this.postAnnouncementForm.reset();
+
+        this.putAnnouncementFormArray.push(new FormGroup({
+          id: new FormControl(response.id, [Validators.required]),
+          title: new FormControl({ value: response.title, disabled: true }, [Validators.required]),
+          description: new FormControl({ value: response.description, disabled: true }, [Validators.required]),
+          dateAdded: new FormControl(new Date()),
+        }));
+        this.announcements.push(new Announcement(response.id, response.title, response.description, response.dateAdded));
+
+        this.isPostAnnouncementFormSubmitted = false;
       },
 
       error: (error: any) => {
@@ -64,5 +95,31 @@ export class AnnouncementsComponent {
 
       complete: () => { }
     });
+  }
+
+  editClicked(announcement: Announcement): void {
+    this.editAnnouncementID = announcement.id;
+  }
+
+  updateClicked(i: number): void {
+
+    this.announcementsService.putAnnouncement(this.putAnnouncementFormArray.controls[i].value).subscribe({
+      next: (response: string) => {
+        console.log(response);
+
+        this.editAnnouncementID = null;
+        this.putAnnouncementFormArray.controls[i].reset(this.putAnnouncementFormArray.controls[i].value);
+      },
+
+      error: (error: any) => {
+        console.log(error);
+      },
+
+      complete: () => { }
+    });
+  }
+
+  navigateToAnnouncement(id: number): void {
+    this.router.navigate(['/announcement', id]);
   }
 }

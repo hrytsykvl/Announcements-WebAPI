@@ -7,12 +7,14 @@ import { AnnouncementsComponent } from './announcements/announcements.component'
 import { HttpClientModule } from '@angular/common/http';
 import { AnnouncementDetailsComponent } from './announcement-details/announcement-details.component';
 import { ReactiveFormsModule } from '@angular/forms';
+import { DisableControlDirective } from './directives/disable-control.directive';
 
 @NgModule({
   declarations: [
     AppComponent,
     AnnouncementsComponent,
-    AnnouncementDetailsComponent
+    AnnouncementDetailsComponent,
+    DisableControlDirective
   ],
   imports: [
     BrowserModule,
