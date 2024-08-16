@@ -26,4 +26,8 @@ export class AnnouncementsService {
   public putAnnouncement(announcement: Announcement): Observable<string> {
     return this.httpClient.put<string>(`${API_BASE_URL}announcements/${announcement.id}`, announcement);
   }
+
+  public deleteAnnouncement(id: number): Observable<string> {
+    return this.httpClient.delete<string>(`${API_BASE_URL}announcements/${id}`);
+  }
 }

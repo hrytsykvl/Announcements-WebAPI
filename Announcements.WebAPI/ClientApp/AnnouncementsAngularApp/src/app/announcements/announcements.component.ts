@@ -119,6 +119,25 @@ export class AnnouncementsComponent {
     });
   }
 
+  deleteClicked(announcement: Announcement, i: number): void {
+    if (confirm('Are you sure you want to delete this announcement?')) {
+      this.announcementsService.deleteAnnouncement(announcement.id).subscribe({
+        next: (response: string) => {
+          console.log(response);
+
+          this.putAnnouncementFormArray.removeAt(i);
+          this.announcements.splice(i, 1);
+        },
+
+        error: (error: any) => {
+          console.log(error);
+        },
+
+        complete: () => { }
+      });
+    }
+  }
+
   navigateToAnnouncement(id: number): void {
     this.router.navigate(['/announcement', id]);
   }

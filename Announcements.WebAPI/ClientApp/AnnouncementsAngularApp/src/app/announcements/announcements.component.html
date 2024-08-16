@@ -28,12 +28,14 @@
          'form-input': announcement.id == editAnnouncementID }" [disableControl]="announcement.id != editAnnouncementID" ></textarea>
             </td>
             <td>{{announcement.dateAdded | date: 'MMM dd yyyy HH:mm:ss'}}</td>
-            <td style="width: 100px">
+            <td style="width: 180px">
               <button class="button button-orange-back" (click)="editClicked(announcement); $event.stopPropagation()"
                       *ngIf="announcement.id != editAnnouncementID">Edit</button>
 
               <button class="button button-orange-back link-hover" (click)="updateClicked(i); $event.stopPropagation()"
                       *ngIf="announcement.id == editAnnouncementID">Update</button>
+              <button class="button button-red-back ml" (click)="deleteClicked(announcement, i); $event.stopPropagation()"
+                      *ngIf="announcement.id != editAnnouncementID">Delete</button>
             </td>
           </tr>
         </tbody>
