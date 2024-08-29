@@ -1,4 +1,5 @@
 ﻿using Announcements.Core.Entities;
+using Announcements.Core.ServiceContracts;
 using Announcements.Infrastructure.DatabaseContext;
 using Announcements.Infrastructure.Helpers;
 using Microsoft.AspNetCore.Http;
@@ -11,11 +12,11 @@ namespace Announcements.WebAPI.Controllers
     [ApiController]
     public class AnnouncementsController : ControllerBase
     {
-        private readonly ApplicationDbContext _context;
+        private readonly IAnnouncementsService _service;
 
-        public AnnouncementsController(ApplicationDbContext context)
+        public AnnouncementsController(IAnnouncementsService service)
         {
-            _context = context;
+            _service = service;
         }
 
         // GET: api/Announcements
@@ -26,14 +27,14 @@ namespace Announcements.WebAPI.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Announcement>>> GetAnnouncements()
         {
-            if (_context.Announcements == null)
+            var announcements = await _service.GetAnnouncementsAsync();
+
+            if (announcements == null)
             {
                 return NotFound();
             }
 
-            return await _context.Announcements
-                .OrderBy(announcement => announcement.DateAdded)
-                .ToListAsync();
+            return announcements.ToList();
         }
 
         // GET: api/Announcements/5
@@ -45,19 +46,17 @@ namespace Announcements.WebAPI.Controllers
         [HttpGet("{announcementId}")]
         public async Task<ActionResult<object>> GetAnnouncement(int announcementId)
         {
-            if (_context.Announcements == null)
-            {
-                return NotFound();
-            }
-            var announcement = await _context.Announcements.FirstOrDefaultAsync(a => a.Id == announcementId);
+            var announcement = await _service.GetAnnouncementByIdAsync(announcementId);
 
             if (announcement == null)
             {
                 return NotFound();
             }
 
+            var announcements = await _service.GetAnnouncementsAsync();
+
             var similarAnnouncements = SimilarAnnouncements
-                .GetSimilarAnnouncements(await _context.Announcements.ToListAsync(), announcement);
+                .GetSimilarAnnouncements(announcements.ToList(), announcement);
 
             var announcementWithSimilar = new
             {
@@ -87,35 +86,11 @@ namespace Announcements.WebAPI.Controllers
         [HttpPut("{announcementID}")]
         public async Task<IActionResult> PutAnnouncement(int announcementId, [Bind(nameof(Announcement.Id), nameof(Announcement.Title), nameof(Announcement.Description), nameof(Announcement.DateAdded))] Announcement announcement)
         {
-            if (announcementId != announcement.Id)
-            {
-                return BadRequest();
-            }
+            var updatedAnnouncement = await _service.UpdateAnnouncementAsync(announcementId, announcement);
 
-            var existingAnnouncement = await _context.Announcements.FindAsync(announcementId);
-            if (existingAnnouncement == null)
+            if (updatedAnnouncement == null)
             {
                 return NotFound();
-            }
-
-            existingAnnouncement.Title = announcement.Title;
-            existingAnnouncement.Description = announcement.Description;
-            existingAnnouncement.DateAdded = DateTime.Now;
-
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!AnnouncementExists(announcementId))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
             }
 
             return NoContent();
@@ -131,37 +106,23 @@ namespace Announcements.WebAPI.Controllers
         public async Task<ActionResult<Announcement>> PostAnnouncement([Bind(nameof(Announcement.Id), nameof(Announcement.Title),
             nameof(Announcement.Description), nameof(Announcement.DateAdded))] Announcement announcement)
         {
-            if (_context.Announcements == null)
-            {
-                return Problem("Entity set 'ApplicationDbContext.Announcements' is null.");
-            }
-
             announcement.DateAdded = DateTime.Now;
-            _context.Announcements.Add(announcement);
-            await _context.SaveChangesAsync();
+            await _service.AddAnnouncementAsync(announcement);
 
-            return CreatedAtAction("GetAnnouncement", new { announcementId = announcement.Id }, announcement);
+            return CreatedAtAction(nameof(GetAnnouncement), new { announcementId = announcement.Id }, announcement);
         }
 
         // DELETE: api/Cities/5
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteCity(int id)
         {
-            var city = await _context.Announcements.FindAsync(id);
-            if (city == null)
+            var isDeleted = await _service.DeleteAnnouncementAsync(id);
+            if (!isDeleted)
             {
                 return NotFound(); //HTTP 404
             }
 
-            _context.Announcements.Remove(city);
-            await _context.SaveChangesAsync();
-
             return NoContent(); //HTTP 200
-        }
-
-        private bool AnnouncementExists(int id)
-        {
-            return (_context.Announcements?.Any(e => e.Id == id)).GetValueOrDefault();
         }
     }
 }
